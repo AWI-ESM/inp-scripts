@@ -7,7 +7,13 @@
 # May 2021:     Adapting the CDO sequence for 
 #               preparing nudging files for OIFS
 #               M. Athanase
+# Mar 2023:     update for ECMWF HPC2020
+#               E. Tourigny
 ######################################################################## 
+
+#set -xuve
+set -ue
+
 CDO=$1
 TEMPLATE=$2
 NDGTAG=$3
@@ -15,32 +21,35 @@ SCRIPTPATH=$4
 RES=$5
 ERAMONTHDIR=$6
 OUTPATH=$7
+TMPPATH=$8
 # Interpolation and format transformation of nudging data using CDO
 #
 # Definition of default output file names:
 # (output files should not yet exist)
 #SPOUT=${FBASENAME}.nc
 #SPOUT=${FBASENAME}
-cd $ERAMONTHDIR
+
+rm -rf $TMPPATH
+mkdir -p $TMPPATH
+cd $TMPPATH
+
+mkdir -p ${OUTPATH}/gg
+mkdir -p ${OUTPATH}/sh
+
+set +u
 
 ########################################################################
 # Interpolation with CDO command sequence:
 rm -f interpolation_$$.sh
 cat >> interpolation_$$.sh <<EOF
 #!/bin/bash
-#SBATCH -J int_cdo             # Specify job name
-#SBATCH -p interactive             # Use partition prepost
-#SBATCH -N 1                   # Specify number of nodes
-#SBATCH -n 1                   # Specify max. number of tasks to be invoked
-#SBATCH -c 8 		       # Number of processors per task
-#SBATCH --mem-per-cpu=5300M    # Memory per cpu-core
-#SBATCH -t 90                  # Set a limit on the total run time
-#SBATCH --time=07:00:00        # Set a limit on the total run time
-##SBATCH -A mh0066             # Charge resources on this project account
-##SBATCH -A bm1205             # Charge resources on this project account
-#SBATCH -A ab0995              # Charge resources on this project account
-#SBATCH -o my_job.o%j          # File name for standard output
-#SBATCH -e my_job.e%j          # File name for standard error output
+
+${LOAD_ENV}
+NDGTAG=\${NDGTAG}
+
+set -xuve
+#set -ue
+
 ########################################################################
 # interpolation of given data for nudging. New land sea mask and
 # orography is taken into account
@@ -54,13 +63,14 @@ cat >> interpolation_$$.sh <<EOF
 # separately, serially.
 #
 ########################################################################
-for f in \`ls ${NDGTAG}*.sp\`;
+for f in \`ls ${ERAMONTHDIR}/????????????.sp\`;
 do
   FBASENAME=\`echo \$f | awk -F "." '{print \$1}'\`
 ########################################
 # To fix: read passed-in tag prefix
 #  TSTAMP=\`echo \${FBASENAME#\${NDGTAG}}\`
-  TSTAMP=\${FBASENAME#era5_}
+#  TSTAMP=\${FBASENAME#era5_}
+  TSTAMP=\`basename \${FBASENAME#\${NDGTAG}}\`
   
   echo 'TSTAMP='\$TSTAMP
 
@@ -71,9 +81,9 @@ do
 
   echo 'SPDATA='\$SPDATA
 
-  if [ -e \$SPOUTSP ]; then
+  if [ -e ${OUTPATH}/sh/\$SPOUTSP ]; then
   echo \$SPOUTSP ' already exists'
-  return 1
+  exit 1
   fi
 ########################################################################
 # 2. Preparation of meteorological input data of the 
@@ -144,18 +154,20 @@ do
   NEWTRUNCATION=\${NEWTRUNCATION#T}
   echo 'NEWTRUNCATION='\$NEWTRUNCATION
   ${CDO} -b 64 -selname,var133 ${TEMPLATE} reducedgrid_$$
-  ${CDO} -b 64 -P 8 --eccodes -f grb2 -remapbil,reducedgrid_$$ -chparam,0.1.0,133.128 -selname,q temp_$$ ${OUTPATH}/gg/\${SPOUTGP}
+#  ${CDO} -b 64 -P 8 --eccodes -f grb2 -remapbil,reducedgrid_$$ -chparam,0.1.0,133.128 -selname,q temp_$$ ${OUTPATH}/gg/\${SPOUTGP}
+  ${CDO} -b 64 -P 8 --eccodes -f grb -remapbil,reducedgrid_$$ -chparam,0.1.0,133.128 -selname,q temp_$$ ${OUTPATH}/gg/\${SPOUTGP}
 
   ${CDO} -b 64 -P 8 -f grb2 gp2sp -uv2dv -delname,q temp_$$ \${SPOUTSP}
   ${CDO} -b 64 -P 8 -f grb2 sp2sp,\${NEWTRUNCATION} -selcode,138,155 \${SPOUTSP} \${SPOUTSP}_codes
   ${CDO} -b 64 -P 8 -f grb2 sp2sp,\${NEWTRUNCATION} -selname,z,t,param25.3.0 \${SPOUTSP} \${SPOUTSP}_names
   rm -f temp_$$ \${SPOUTSP} reducedgrid_$$
   ${CDO} -b 64 -f grb2 merge \${SPOUTSP}_codes \${SPOUTSP}_names temp_$$
-  ${CDO} -a -b 64 --eccodes -f grb2 copy -chparam,4.3.0,129.128 -chparam,25.3.0,152.128 -chparam,0.0.0,130.128 -chname,var155,sd -chname,param25.3.0,lsp -chname,var138,svo temp_$$ ${OUTPATH}/sh/\${SPOUTSP}
+#  ${CDO} -a -b 64 --eccodes -f grb2 copy -chparam,4.3.0,129.128 -chparam,25.3.0,152.128 -chparam,0.0.0,130.128 -chname,var155,sd -chname,param25.3.0,lsp -chname,var138,svo temp_$$ ${OUTPATH}/sh/\${SPOUTSP}
+  ${CDO} -a -b 64 --eccodes -f grb copy -chparam,4.3.0,129.128 -chparam,25.3.0,152.128 -chparam,0.0.0,130.128 -chname,var155,sd -chname,param25.3.0,lsp -chname,var138,svo temp_$$ ${OUTPATH}/sh/\${SPOUTSP}
 
   rm -f temp_$$ \${SPOUTSP}_codes \${SPOUTSP}_names
 done
 EOF
-sbatch interpolation_$$.sh
+${SUBMIT} interpolation_$$.sh
 
 
