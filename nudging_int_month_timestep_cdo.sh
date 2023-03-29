@@ -8,6 +8,10 @@
 #               preparing nudging files for OIFS
 #               M. Athanase
 ######################################################################## 
+
+#set -xuve
+set -ue
+
 SCRIPTPATH=$1
 CDO=$2
 NDGTAG=$3
@@ -22,7 +26,6 @@ OUTPATH=$9
 # Calls int_cdo.sh
 
 mkdir -p ${OUTPATH}/sh ${OUTPATH}/gg
-
 
 ERAMONTHDIR=${INPATH}/${NDGTAG}${CYEAR}${MONTH}
 mkdir -p $ERAMONTHDIR/tmp_${NDGTAG}${RES}
@@ -60,7 +63,7 @@ do
 done
 
 # Beging interpolation at each time step  
-${SCRIPTPATH}/int_cdo.sh ${CDO} ${TEMPLATEPOOL}/template.oifs${RES} ${NDGTAG} ${SCRIPTPATH} ${RES} $ERAMONTHDIR/tmp_${NDGTAG}${RES}/ ${OUTPATH} >> int_cdo.aus
+${SCRIPTPATH}/int_cdo.sh ${CDO} ${TEMPLATEPOOL}/template.oifs${RES} ${NDGTAG} ${SCRIPTPATH} ${RES} $ERAMONTHDIR/tmp_${NDGTAG}${RES}/ ${OUTPATH} # >> int_cdo.aus
 
-#rm -r $ERAMONTHDIR/tmp_${NDGTAG}${RES}/
+#rm -rf $ERAMONTHDIR/tmp_${NDGTAG}${RES}/
 exit

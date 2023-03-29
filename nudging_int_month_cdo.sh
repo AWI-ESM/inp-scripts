@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/bash
 #
 # Feb 2011:     Original implementation of the CDO command sequence for
 #               preparing nudging files for ECHAM
@@ -8,6 +8,10 @@
 #               preparing nudging files for OIFS
 #               M. Athanase
 ######################################################################## 
+
+#set -xuve
+set -ue
+
 SCRIPTPATH=$1
 CDO=$2
 NDGTAG=$3
@@ -50,10 +54,11 @@ do
    ERAMONTHDIR=${NDGTAG}${CYEAR}${MONTH}
    cd ${INPATH}
    if [ ! -d $ERAMONTHDIR ]; then
-     echo 'Reanalysis data for the month '${CYEAR}${MONTH}' has not been preprocessed! Call preprocess_inputdata.sh first.'
+       echo 'Reanalysis data for the month '${CYEAR}${MONTH}' has not been preprocessed! Call preprocess_inputdata.sh first.'
+       exit 1
    fi
    cd $ERAMONTHDIR
-   ${SCRIPTPATH}/nudging_int_month_timestep_cdo.sh ${SCRIPTPATH} ${CDO} ${NDGTAG} ${RES} ${CYEAR} ${MONTH} ${INPATH} ${TEMPLATEPOOL} ${OUTPATH} >> nudging_int_month_timestep_cdo.aus 
+   ${SCRIPTPATH}/nudging_int_month_timestep_cdo.sh ${SCRIPTPATH} ${CDO} ${NDGTAG} ${RES} ${CYEAR} ${MONTH} ${INPATH} ${TEMPLATEPOOL} ${OUTPATH} # >> nudging_int_month_timestep_cdo.aus 
    CYEAR=`expr $CYEAR + 1`
 done
 exit

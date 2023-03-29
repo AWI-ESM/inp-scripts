@@ -4,6 +4,10 @@
 #               S. Rast, A. Voigt, U. Schulzweida
 #
 ######################################################################
+
+#set -xuve
+set -ue
+
 SCRIPTPATH=$1
 CDO=$2
 INPATH=$3
@@ -50,7 +54,7 @@ fi
 if [ ${#EMONTH} -lt 1 ]; then
     EMONTH=12
 fi
-rm -f ${NDGTAG}_int_month.aus
+#rm -f ${NDGTAG}_int_month.aus
 CMONTH=1
 while [ $CMONTH -le 12 ]
 do
@@ -62,7 +66,7 @@ do
    if [ $CMONTH -gt $EMONTH ]; then
       EYEAR_MONTH=`expr $EYEAR_MONTH - 1`
    fi
-   ${SCRIPTPATH}/nudging_int_month_cdo.sh $SCRIPTPATH $CDO $NDGTAG $INPATH $RES $BYEAR_MONTH $EYEAR_MONTH $CMONTH $TEMPLATEPOOL $OUTPATH >> ${NDGTAG}_int_month_cdo.aus &
+   ${SCRIPTPATH}/nudging_int_month_cdo.sh $SCRIPTPATH $CDO $NDGTAG $INPATH $RES $BYEAR_MONTH $EYEAR_MONTH $CMONTH $TEMPLATEPOOL $OUTPATH # >> ${NDGTAG}_int_month_cdo.aus &
    CMONTH=`expr $CMONTH + 1`
 done
 exit

@@ -14,6 +14,10 @@
 #
 # Scripts description and usage in README
 ######################################################################## 
+
+#set -xuve
+set -ue
+
 NDGTAG=$1            # TAG of nudging data, e.g. era5_ or analogous
 RES=$2               # resolution of interpolated nudging data, e.g. TCO159L91
 BYEAR=$3             # first year to interpolate
