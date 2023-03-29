@@ -1,18 +1,10 @@
 #!/bin/sh 
-#SBATCH --job-name=preprocess_reana_year
-#SBATCH --partition=interactive
-#SBATCH --nodes=1
-#SBATCH --mem-per-cpu=5300M    # Memory per cpu-core
-#SBATCH --time=01:00:00
-#SBATCH --mail-type=FAIL
-#SBATCH --account=ab0995
-#SBATCH --output=log_preprocess_reana_year.o%j
-#SBATCH --error=log_preprocess_reana_year.e%j
-#
 # Subroutine called by preprocess_inputdata.sh
 # 
 # M. Athanase, H. Goessling
 ######################################################################## 
+
+set -xuve
 
 CDO=$1 		# path to CDO module
 SCRIPTPATH=$2 	# path to script folder
@@ -45,10 +37,10 @@ do
 
       # Create folder to be archived
       NDGPATH=${OUTPATH}/${NDGTAG}${YEAR}${MONTH}/
-      mkdir ${NDGPATH}
+      mkdir -p ${NDGPATH}
       echo 'Folder '${NDGPATH}' created'
       # Execute preprocessing by monthly chunks
-      sbatch ${SCRIPTPATH}/preprocess_inputdata_month.sh ${CDO} ${SCRIPTPATH} ${POOL} ${NDGPATH} ${NDGTAG} ${YEAR} ${MONTH}
+      ${SUBMIT} ${SCRIPTPATH}/preprocess_inputdata_month.sh ${CDO} ${SCRIPTPATH} ${POOL} ${NDGPATH} ${NDGTAG} ${YEAR} ${MONTH}
       CMONTH=`expr $CMONTH + 1`
    done
    YEAR=`expr $YEAR + 1`

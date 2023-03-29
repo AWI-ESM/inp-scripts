@@ -1,14 +1,4 @@
 #!/bin/ksh
-#SBATCH --job-name=preprocess_reana_month
-#SBATCH --partition=interactive
-#SBATCH --nodes=1
-#SBATCH -c 8                   # Number of processors per task
-#SBATCH --mem-per-cpu=5300M    # Memory per cpu-core
-#SBATCH --time=00:30:00        # Set a limit on the total run time
-#SBATCH --mail-type=FAIL
-#SBATCH --account=ab0995
-#SBATCH --output=log_preprocess_reana_month.o%j
-#SBATCH --error=log_preprocess_reana_month.e%j
 #
 # Subroutine called by preprocess_inputdata_year.sh
 #
