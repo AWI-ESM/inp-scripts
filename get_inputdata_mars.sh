@@ -5,8 +5,8 @@
 # E. Tourigny
 ######################################################################## 
 
-#set -xuve
-set -ue
+set -xuve
+#set -ue
 
 OUTPATH=$1	# path to output the monthly reanalysis data
 NDGTAG=$2       # TAG of nudging data, e.g. era5_ or analogous
@@ -20,8 +20,8 @@ echo 'Folder '${NDGPATH}' created'
 
 # Execute by monthly chunks
 date_start=${YEAR}${MONTH}01
-#date_end=`date --date="${date_start} +1 month -1 day" "+%Y%m%d"`
-date_end=`date --date="${date_start} +3 day -1 day" "+%Y%m%d"`
+date_end=`date --date="${date_start} +1 month -1 day" "+%Y%m%d"`
+#date_end=`date --date="${date_start} +3 day -1 day" "+%Y%m%d"`
 
 script_mars=dirmars_${date_start}_${date_end}
 cat > ${script_mars} << **EOF**
