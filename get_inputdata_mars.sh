@@ -13,8 +13,14 @@ NDGTAG=$2       # TAG of nudging data, e.g. era5_ or analogous
 YEAR=$3
 MONTH=$4
 
-# Create folder to be archived
+# Create folder to be archived, or exit if it exists already
 NDGPATH=${OUTPATH}/${NDGTAG}${YEAR}${MONTH}
+
+if [ -d ${NDGPATH} ]; then
+  echo ${NDGPATH} already exists - nothing to do!
+  exit 0
+fi
+
 mkdir -p ${NDGPATH}
 echo 'Folder '${NDGPATH}' created'
 

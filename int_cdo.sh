@@ -67,11 +67,7 @@ for f in \`ls ${ERAMONTHDIR}/????????????.sp\`;
 do
   FBASENAME=\`echo \$f | awk -F "." '{print \$1}'\`
 ########################################
-# To fix: read passed-in tag prefix
-#  TSTAMP=\`echo \${FBASENAME#\${NDGTAG}}\`
-#  TSTAMP=\${FBASENAME#era5_}
   TSTAMP=\`basename \${FBASENAME#\${NDGTAG}}\`
-  
   echo 'TSTAMP='\$TSTAMP
 
   SPOUTGP=\`echo 'rlxmlgg'\${TSTAMP}\`
@@ -82,8 +78,8 @@ do
   echo 'SPDATA='\$SPDATA
 
   if [ -e ${OUTPATH}/sh/\$SPOUTSP ]; then
-  echo \$SPOUTSP ' already exists'
-  exit 1
+    echo \$SPOUTSP ' already exists - nothing to do!'
+    exit 0
   fi
 ########################################################################
 # 2. Preparation of meteorological input data of the 
