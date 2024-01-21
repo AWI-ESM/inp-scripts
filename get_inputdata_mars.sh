@@ -16,7 +16,7 @@ MONTH=$4
 # Create folder to be archived, or exit if it exists already
 NDGPATH=${OUTPATH}/${NDGTAG}${YEAR}${MONTH}
 
-if [ -d ${NDGPATH} ]; then
+if [ -d ${NDGPATH} ] && ! [ -z "$(ls -A ${NDGPATH})" ]; then
   echo ${NDGPATH} already exists - nothing to do!
   exit 0
 fi

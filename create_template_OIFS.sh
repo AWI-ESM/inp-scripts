@@ -33,15 +33,29 @@ else
 fi
 ${CDO} seltimestep,1 ${INPATH}/ICMGG${EXPID}INIUA tmp1a$$
 ${CDO} seltimestep,1 ${INPATH}/ICMSH${EXPID}INIT tmp2$$
-${CDO} --eccodes -f grb2 -selcode,172 -setgridtype,regular tmp1$$ tmp3a$$
+
 if [ "${EXPID}" == "ECE3" ]; then
+    ${CDO} --eccodes -f grb2 -selcode,172 -setgridtype,regular tmp1$$ tmp3a$$
     ${CDO} -f grb2 -selcode,133 tmp1a$$ tmp3b$$
     ${CDO} -f grb2 -selcode,130 tmp2$$ tmp4b$$
+    ${CDO} -f grb2 -selcode,129 tmp2$$ tmp4a$$
 else
+    ${CDO} --eccodes -f grb2 -selcode,172 -setgridtype,regular tmp1$$ tmp3a$$
+
     ${CDO} -f grb2 -chparam,0.1.0,133.128 -selname,q tmp1a$$ tmp3b$$
+
+    # this fix needed for TL159, because z is in grb2 not grb1
+    if [[ "${RES}" == TL* ]] ; then
+	grib_copy -w paramId=129 tmp2$$ tmp4a1$$
+	grib_set -s edition=1 tmp4a1$$ tmp4a2$$
+	${CDO} -f grb2 -selcode,129 tmp4a2$$ tmp4a$$
+	rm -f tmp4a1$$ tmp4a2$$
+    else
+	${CDO} -f grb2 -selcode,129 tmp2$$ tmp4a$$
+    fi
+    
     ${CDO} -f grb2 -chparam,0.0.0,130.128 -selname,t tmp2$$ tmp4b$$
 fi
-${CDO} -f grb2 -selcode,129 tmp2$$ tmp4a$$
 
 ${CDO} merge tmp4a$$ tmp4b$$ tmp3a$$ tmp3b$$ tmp_$$
 ${CDO} -O copy tmp_$$ ${OUTPATH}/template.oifs${RES}
