@@ -79,3 +79,25 @@ nudging_cdo.sh
 		3) nudging_int_month_timestep_cdo.sh : Splitting the input data into
 		single timestep files ready for interpolation.
 		4) int_cdo.sh : Interpolation and save of the reanalysis data.
+
+main_ecmwf_hpc2020.sh
+
+		- Description:
+		Main script for the retrieval, preparation and interpolation of nudging files
+		on the ECMWF hpc2020 system based on a given reanalysis dataset. 
+
+                - Called as (from the ecs-login system):
+		bash main_ecmwf_hpc2020.sh
+
+                - Comments:
+		You must edit a few variables in the script and the script will submit
+		a job via sbatch for each month of the chosen period.
+		Each sbatch job downloads the raw data from mars, then interpolates
+		the data to the target resolution. If you want to process multiple
+		resolutions, you can comment the downloading script if the files
+		have already been downloaded (default location is in $SCRATH which
+		gets deleted afew a few weeks of inactivity.
+
+		- Subroutines called:
+		1) get_inputdata_mars.sh : downloads data from mars : called for each year/month
+		2) int_cdo.sh : Interpolation and save of the reanalysis data.
