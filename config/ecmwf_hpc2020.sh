@@ -26,6 +26,8 @@ TEMPLATES=/perm/c3et/nudging/data/templates
 TMPPATH=/scratch/c3et/nudging/tmp/
 CDO='cdo'
 SCRIPTPATH=`pwd`
+DATASOURCE="MARS"
+
 
 # submit command
 # if you don't want to launch via sbatch and run interactively - useful for testing

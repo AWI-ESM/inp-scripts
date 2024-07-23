@@ -21,11 +21,16 @@ EMONTH=02
 # main configuration options, adapt to your user/environment
 INPATH=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/nudging/${RES}/${DATA_SET}raw
 OUTPATH=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/nudging/${RES}/${DATA_SET}
-#POOL=/perm/c3et/nudging/data/${DATA_SET}raw #not tested
 TEMPLATES=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/templates/
 TMPPATH=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/tmp/
 CDO='cdo'
 SCRIPTPATH=`pwd`
+POOL=/pool/data/ERA5/E5/ml/an/1H/
+
+DATASOURCE="POOL"
+
+
+
 
 # submit command
 # if you don't want to launch via sbatch and run interactively - useful for testing
@@ -33,7 +38,7 @@ SCRIPTPATH=`pwd`
 export SUBMIT='sbatch -p interactive -c 8 --mem-per-cpu=5300M --time=07:00:00 -A ba1264'
 
 #load required environment
-export LOAD_ENV='module load cdo/2.0.6'
+export LOAD_ENV='module swap cdo/2.0.6-gcc-11.2.0'
 
 # options for create_template script only
 #this is for ECE4

@@ -1,11 +1,12 @@
 #!/bin/bash
 # Jul 2024: Creating steering script with sourced config files
 
-#source config/conf_ecmwf_hpc2020.sh
-source config/conf_dkrz_levante.sh
+#source config/ecmwf_hpc2020.sh
+source config/dkrz_levante.sh
 
-mkdir -p ${TMPPATH}
+mkdir -p ${TMPPATH} templates nudging
 cd ${TMPPATH}
+
 
 ${LOAD_ENV}
 
@@ -19,6 +20,7 @@ ${LOAD_ENV}
 #grib_copy -w dataTime=0/6/12/18 E5ml00_1H_${year}-${month}-*_133 [dataDate][dataTime].gp
 #bash ${SCRIPTPATH}/preprocess_inputdata_year.sh ${CDO} ${SCRIPTPATH} ${POOL} ${INPATH} ${DATA_SET} ${BYEAR} ${EYEAR}
 
+
 #new workflow calling scripts for individual months directly at ECMWF
 for CYEAR in `seq ${BYEAR} ${EYEAR}`
 do
@@ -27,7 +29,10 @@ do
     MONTH=$(printf "%02d" $mon)
     script="int_${DATA_SET}${RES}_${CYEAR}${MONTH}.sh"
     rm -f ${script}
-    cat >> ${script} <<EOF
+
+    if [ "$DATASOURCE" == "MARS" ]; then
+	echo "Data source is MARS"
+        cat > ${script} <<EOF
 #!/bin/bash
 
 export SUBMIT='bash'
@@ -35,6 +40,17 @@ export LOAD_ENV='${LOAD_ENV}'
 bash ${SCRIPTPATH}/get_inputdata_mars.sh ${INPATH} ${DATA_SET} ${CYEAR} ${MONTH}
 bash ${SCRIPTPATH}/int_cdo.sh ${CDO} ${TEMPLATES}/template.oifs${RES} ${DATA_SET} ${SCRIPTPATH} ${RES} ${INPATH}/${DATA_SET}${CYEAR}${MONTH} ${OUTPATH}/${RES} ${TMPPATH}/${DATA_SET}${CYEAR}${MONTH}/tmp_${DATA_SET}${RES}
 EOF
+    elif [ "$DATASOURCE" == "POOL" ]; then
+	echo "Data source is POOL"
+        cat > ${script} <<EOF
+#!/bin/bash
+
+export SUBMIT='bash'
+export LOAD_ENV='${LOAD_ENV}'
+bash ${SCRIPTPATH}/get_inputdata_pool.sh ${CDO} ${SCRIPTPATH} ${POOL} ${OUTPATH} ${DATA_SET} ${CYEAR} ${MONTH}
+bash ${SCRIPTPATH}/int_cdo.sh ${CDO} ${TEMPLATES}/template.oifs${RES} ${DATA_SET} ${SCRIPTPATH} ${RES} ${INPATH}/${DATA_SET}${CYEAR}${MONTH} ${OUTPATH}/${RES} ${TMPPATH}/${DATA_SET}${CYEAR}${MONTH}/tmp_${DATA_SET}${RES}
+EOF
+    fi
     ${SUBMIT} ${script}
   done
 done
