@@ -16,11 +16,11 @@ RES='TCO95L91'
 BYEAR=2015
 EYEAR=2015
 BMONTH=01
-EMONTH=02
+EMONTH=01
 
 # main configuration options, adapt to your user/environment
-INPATH=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/nudging/${RES}/${DATA_SET}raw
-OUTPATH=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/nudging/${RES}/${DATA_SET}
+INPATH=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/nudging/${DATA_SET}raw
+OUTPATH=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/nudging/${DATA_SET}
 TEMPLATES=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/templates/
 TMPPATH=/work/ba1264/a270216/INP_SCRIPTS_ET/inp-scripts/tmp/
 CDO='cdo'

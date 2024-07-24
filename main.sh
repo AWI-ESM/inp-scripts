@@ -47,8 +47,9 @@ EOF
 
 export SUBMIT='bash'
 export LOAD_ENV='${LOAD_ENV}'
-bash ${SCRIPTPATH}/get_inputdata_pool.sh ${CDO} ${SCRIPTPATH} ${POOL} ${OUTPATH} ${DATA_SET} ${CYEAR} ${MONTH}
+bash ${SCRIPTPATH}/get_inputdata_pool.sh ${CDO} ${SCRIPTPATH} ${POOL} ${INPATH}/${DATA_SET}${CYEAR}${MONTH} ${DATA_SET} ${CYEAR} ${MONTH}
 bash ${SCRIPTPATH}/int_cdo.sh ${CDO} ${TEMPLATES}/template.oifs${RES} ${DATA_SET} ${SCRIPTPATH} ${RES} ${INPATH}/${DATA_SET}${CYEAR}${MONTH} ${OUTPATH}/${RES} ${TMPPATH}/${DATA_SET}${CYEAR}${MONTH}/tmp_${DATA_SET}${RES}
+#rm ${INPATH}/${DATA_SET}${CYEAR}${MONTH}
 EOF
     fi
     ${SUBMIT} ${script}
