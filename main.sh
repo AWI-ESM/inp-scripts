@@ -1,27 +1,42 @@
 #!/bin/bash
+#
 # Jul 2024: Creating steering script with sourced config files
+# 	    J. Streffind, E. Tourigny, M. Athanase
+#
+#
+################################################################
+#
+# Warning: This steering script needs to be modified for each
+#          platform/HPC. Please edit required lines, as 
+#          indicated by comments "USER EDIT REQUIRED".
+#
+################################################################
 
+
+## USER EDIT REQUIRED ##
 #source config/ecmwf_hpc2020.sh
 source config/dkrz_levante.sh
 
-mkdir -p ${TMPPATH} templates nudging
 cd ${TMPPATH}
 
 
 ${LOAD_ENV}
 
-# script to create template file for a given resolution, run only once for a new resolution
+## USER EDIT REQUIRED ##
+## Comment/uncomment the line below to create template file for a given resolution, run only once for a new resolution
+
 #bash ${SCRIPTPATH}/create_template_OIFS.sh $RES $EXPID $FESOM_MESH ${INPATH_TEMPLATE} $TEMPLATES $CDO
 #exit 0
 
-# use this script to format data used at AWI instead of downloading from mars using get_inputdata_mars.sh script
-# this could be replaced by (untested)
+
+## use this script to format data used at AWI instead of downloading from mars using get_inputdata_mars.sh script
+## this could be replaced by (untested)
 #grib_copy -w dataTime=0/6/12/18 E5ml00_1H_${year}-${month}-*_{129,130,138,152,155} [dataDate][dataTime].sp
 #grib_copy -w dataTime=0/6/12/18 E5ml00_1H_${year}-${month}-*_133 [dataDate][dataTime].gp
 #bash ${SCRIPTPATH}/preprocess_inputdata_year.sh ${CDO} ${SCRIPTPATH} ${POOL} ${INPATH} ${DATA_SET} ${BYEAR} ${EYEAR}
 
 
-#new workflow calling scripts for individual months directly at ECMWF
+## New workflow calling scripts for individual months directly at ECMWF
 for CYEAR in `seq ${BYEAR} ${EYEAR}`
 do
   for mon in `seq ${BMONTH} ${EMONTH}`

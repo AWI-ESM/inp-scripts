@@ -17,11 +17,12 @@
 Routines must be preferably called in the following order:
 
 Step 1:
-Configure your config file (in config folder)
+Configure your config file (in config folder).
+Add in particular the source data set to be used, the start and end dates, and target resolution & grids.
 
 Step 2: 
 Call corresponding config in main.sh
-Comment/Uncomment create_template routine to generate a template file needed for interpolation 
+Comment/Uncomment create_template routine to generate a template file needed for interpolation (only required to run once for each resolution)
 
 Step 3:
 ./main.sh
