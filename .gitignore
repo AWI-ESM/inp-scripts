@@ -1,2 +1,4 @@
-*.aus
-log_preprocess_reana*
+nudging/
+tmp/
+templates/
+

@@ -9,73 +9,20 @@
 #                create_template_OIFS.sh) for OpenIFS.					#
 #		Implementation of the preprocessing routine preprocess_inputdata.sh.	#
 #		M. Athanase, H. Goessling						#
+#                                                                                       #
+# 2024:         Optimization & update for ECMWF HPC                                     #
+# 		E. Tourigny, J. Streffing						#
 #											#
 #########################################################################################
 Routines must be preferably called in the following order:
 
-create_template_OIFS.sh
+Step 1:
+Configure your config file (in config folder).
+Add in particular the source data set to be used, the start and end dates, and target resolution & grids.
 
-                - Description:
-                Generate a template file needed for interpolation (FROM OIFS FILES).
-                Must be called before nudging_cdo.sh if no template file exists
-                for the requested resolution!
+Step 2: 
+Call corresponding config in main.sh
+Comment/Uncomment create_template routine to generate a template file needed for interpolation (only required to run once for each resolution)
 
-                - Called as:
-                ./create_template.sh <resolution> <exp_ID>
-
-                - Example:
-                ./create_template.sh TCO159L91 h9wu
-
-                - Comments: 
-		The input files will be taken from INIT files for the requested grid.
-                The files are GRIB format.
-                The exp_ID is different for each grid! Check in the folder:
-                /work/ab0246/a270092/input/oifs-43r3/<resolution>/ first.
-
-
-preprocess_inputdata.sh
-
-		- Description:
-		Main script for the preparation of reanalysis data into readable 
-		monthly files for the preparation of nudging files.
-		Must be called before nudging_cdo.sh if the requested period has 
-		not been pre-processed before!
-
-		- Called as:
-		./preprocess_inputdata.sh <dataset> BYEAR EYEAR
-
-		- Example:
-		./preprocess_inputdata.sh era5_ 2000 2010
-
-		- Comments:
-		The output produced runs from January BYEAR to December EYEAR-1.
-
-		- Subroutines called:
-		1) preprocess_inputdata_year.sh : Loops through years and months.
-		2) preprocess_inputdata_month.sh : Reanalysis data preparation for
-		each single month.
-
-nudging_cdo.sh
- 
-		- Description:
-		Main script for the preparation and interpolation of nudging files
-		based on a given reanalysis dataset. 
-
-                - Called as:
-		./nudging_cdo.sh <dataset> <resolution> BYEAR BMONTH EYEAR EMONTH
-
-                - Example:
-                ./nudging_cdo.sh era5_ TCO159L91 2000 01 2009 12
-
-                - Comments:
-		There will be an outputfile 
-                <dataset>_int_month_cdo.aus
-                in the directory from which nudging_cdo.sh is called listing all 
-		years and months that will be treated.
-
-		- Subroutines called:
-		1) nudging_int_cdo.sh : Loops through years and months.
-		2) nudging_int_month_cdo.sh : 
-		3) nudging_int_month_timestep_cdo.sh : Splitting the input data into
-		single timestep files ready for interpolation.
-		4) int_cdo.sh : Interpolation and save of the reanalysis data.
+Step 3:
+./main.sh
